@@ -1,0 +1,64 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#define MAX_VERTICES 100 
+struct Edge { 
+int src, dest, weight; 
+}; 
+struct Graph { 
+int numVertices, numEdges; 
+struct Edge edges[MAX_VERTICES]; 
+}; 
+void initializeGraph(struct Graph* graph, int numVertices, int numEdges) { 
+graph->numVertices = numVertices; 
+graph->numEdges = numEdges; 
+for (int i = 0; i < numEdges; i++) { 
+graph->edges[i].src = 0; 
+graph->edges[i].dest = 0; 
+graph->edges[i].weight = 0; 
+} 
+} 
+int find(int parent[], int vertex) { 
+if (parent[vertex] == -1) { 
+return vertex; 
+} 
+return find(parent, parent[vertex]); 
+} 
+void unionSets(int parent[], int x, int y) { 
+int xroot = find(parent, x); 
+int yroot = find(parent, y); 
+parent[xroot] = yroot; 
+} 
+int compareEdges(const void* a, const void* b) { 
+return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight; 
+}void kruskalMST(struct Graph* graph) { 
+int parent[MAX_VERTICES]; 
+for (int i = 0; i < graph->numVertices; i++) { 
+parent[i] = -1; 
+} 
+qsort(graph->edges, graph->numEdges, sizeof(graph->edges[0]), compareEdges); 
+printf("Edge Weight\n"); 
+for (int i = 0; i < graph->numEdges; i++) { 
+int srcRoot = find(parent, graph->edges[i].src); 
+int destRoot = find(parent, graph->edges[i].dest); 
+if (srcRoot != destRoot) { 
+printf("%d - %d %d\n", graph->edges[i].src, graph->edges[i].dest, 
+graph->edges[i].weight); 
+unionSets(parent, srcRoot, destRoot); 
+} 
+} 
+} 
+int main() { 
+struct Graph graph; 
+int numVertices, numEdges; 
+printf("Enter the number of vertices: "); 
+scanf("%d", &numVertices); 
+printf("Enter the number of edges: "); 
+scanf("%d", &numEdges); 
+initializeGraph(&graph, numVertices, numEdges); 
+printf("Enter edges and weights (source destination weight):\n"); 
+for (int i = 0; i < numEdges; i++) { 
+scanf("%d %d %d", &graph.edges[i].src, &graph.edges[i].dest, &graph.edges[i].weight); 
+} 
+kruskalMST(&graph); 
+return 0; 
+}
