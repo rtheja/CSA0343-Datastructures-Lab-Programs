@@ -1,0 +1,64 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#define MAX_VERTICES 100 
+struct Node { 
+int data; 
+struct Node* next; 
+}; 
+struct Graph { 
+struct Node* adjList[MAX_VERTICES]; 
+int visited[MAX_VERTICES]; 
+}; 
+void initializeGraph(struct Graph* graph, int numVertices) { 
+for (int i = 0; i < numVertices; i++) { 
+graph->adjList[i] = NULL; 
+graph->visited[i] = 0; 
+} 
+} 
+void addEdge(struct Graph* graph, int src, int dest) { 
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node)); 
+newNode->data = dest; 
+newNode->next = graph->adjList[src]; 
+graph->adjList[src] = newNode; 
+} 
+void bfs(struct Graph* graph, int startVertex, int numVertices) { 
+int queue[MAX_VERTICES]; 
+int front = 0, rear = 0; 
+graph->visited[startVertex] = 1; 
+queue[rear++] = startVertex; 
+while (front < rear) { 
+int currentVertex = queue[front++];printf("%d ", currentVertex); 
+struct Node* temp = graph->adjList[currentVertex]; 
+while (temp != NULL) { 
+int adjVertex = temp->data; 
+if (graph->visited[adjVertex] == 0) { 
+graph->visited[adjVertex] = 1; 
+queue[rear++] = adjVertex; 
+} 
+temp = temp->next; 
+} 
+} 
+} 
+int main() { 
+struct Graph graph; 
+int numVertices, numEdges; 
+printf("Enter the number of vertices: "); 
+scanf("%d", &numVertices); 
+printf("Enter the number of edges: "); 
+scanf("%d", &numEdges); 
+initializeGraph(&graph, numVertices); 
+printf("Enter edges (source destination):\n"); 
+for (int i = 0; i < numEdges; i++) { 
+int src, dest; 
+scanf("%d %d", &src, &dest); 
+addEdge(&graph, src, dest); 
+addEdge(&graph, dest, src); 
+} 
+int startVertex; 
+printf("Enter the starting vertex for BFS: "); 
+scanf("%d", &startVertex); 
+printf("BFS traversal starting from vertex %d: ", startVertex); 
+bfs(&graph, startVertex, numVertices); 
+printf("\n"); 
+return 0; 
+}
